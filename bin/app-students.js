@@ -8,36 +8,63 @@ mongoose.connect('mongodb://localhost/mongoose-crud', {
 const db = mongoose.connection
 
 //Here, Import the `models/student.js` to variable and called 'Student'
-// const Student = ...??
+const Student = require('../models/student');
 
 const done = function () { // eslint-disable-line no-unused-vars
-  db.close()
+  db.close() 
 }
 
-
 const create = function (firstName, lastName, grade, age, city) {
-  /* Add Code Here */
+  const studentParam = {
+    firstName:firstName,
+    lastName:lastName,
+    grade:grade,
+    age:age,
+    city:city
+  }
+  Student.create(studentParam)
+  .then((sStudent) => console.log(sStudent))
+  .catch(console.error)
+  .then(done)
 }
 
 const index = function () {
-  /* Add Code Here */
-  
+  Student.find()
+  .then((pStudents) =>{ pStudents.forEach( (sStudent) => console.log(sStudent.toJSON()) ) } )
+  .catch(console.error)
+  .then(done)
 }
 
 const show = function (id) {
-  /* Add Code Here */
+  Student.findById(id)
+  .then((sStudent) => console.log (sStudent.toJSON()))
+  .catch(console.error)
+  .then(done)
 }
 
 const destroy = function (id) {
-  /* Add Code Here */
+  Student.findById(id)
+  .then( (sStudent) => sStudent.remove() )
+  .catch(console.error)
+  .then(done)
 }
 
+/**
+ * @param {student id} id 
+ * @param {the column that the user want to update} field 
+ * @param {new value that entered by the user } value 
+ */
 const update = function (id, field, value) {
-  /* Add Code Here */
+  Student.findById(id)
+  .then( (sStudent) => {
+    sStudent[field] = value
+    return sStudent.save()
+  })
+  .then( (sStudent) =>console.log(sStudent.toJSON()))
+  .catch(console.error)
+  .then(done)
 }
 
-
- 
 db.once('open', function () {
   const command = process.argv[2]
 
